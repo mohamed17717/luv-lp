@@ -4,18 +4,20 @@ to work faster i make this boilerplate according to my needs.
 
 ## steps
 
+> ### Commands assume that u are in app root folder
+
 ### create virtual env
 
 ```bash
-virtualenv -p=python3.8 env
-source env/bin/activate
-cd env
-mkdir src && cd src
+virtualenv -p=python3.8 .
+source bin/activate
 ```
 
 ### clone this repo
 
 ```bash
+mkdir src && cd src
+
 git clone https://github.com/mohamed17717/django-poilerplate.git .
 pip install -r requirements.txt
 ```
@@ -32,3 +34,5 @@ look in app created to use things like signals and stuff whenever you need
 - [x] signals
 - [x] decorators
 - [ ] most used models & views (authentication, profile, ...)
+- [ ] forms
+- [ ] add features to admin panel

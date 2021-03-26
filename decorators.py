@@ -1,4 +1,5 @@
 from django.views.decorators.http import require_http_methods
+from django.core.cache import cache
 from django.http import (
     HttpResponseBadRequest,
     HttpResponseNotAllowed,
@@ -42,24 +43,24 @@ def is_from_myApp(func):
 
 
 def is_account_active(func):
-  @is_authorized
-  def wrapper(request, *args, **kwargs):
-    token = JWTAuth.extractRequestToken(request)
+    @is_authorized
+    def wrapper(request, *args, **kwargs):
+        token = JWTAuth.extractRequestToken(request)
 
-    if not JWTAuth.checkUserTokenIsActiveAccount(token):
-      return HttpResponseRedirect('/auth/activate/')
+        if not JWTAuth.checkUserTokenIsActiveAccount(token):
+            return HttpResponseRedirect('/auth/activate/')
 
-    return func(request, *args, **kwargs)
-  return wrapper
+        return func(request, *args, **kwargs)
+    return wrapper
 
 def is_authorized(func):
-  def wrapper(request, *args, **kwargs):
-    token = JWTAuth.extractRequestToken(request)
-    if not JWTAuth.checkUserTokenValid(token):
-      return HttpResponseForbidden()
+    def wrapper(request, *args, **kwargs):
+        token = JWTAuth.extractRequestToken(request)
+        if not JWTAuth.checkUserTokenValid(token):
+            return HttpResponseForbidden()
 
-    return func(request, *args, **kwargs)
-  return wrapper
+        return func(request, *args, **kwargs)
+    return wrapper
 
 
 
@@ -118,3 +119,22 @@ def allow_fields(allowed_fields=[]):
 
 def validateToken():
     pass
+
+
+
+# cace decorator
+def cache_request(name_format, timeout=60*60*24, identifier=None):
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            name = name_format
+            if identifier: 
+                name = name_format.format(**{identifier: kwargs[identifier]})
+
+            output = cache.get(name)
+            if not output:
+                output = func(*args, **kwargs)
+                cache.set(name, output, timeout=timeout)
+
+            return output
+        return wrapper
+    return decorator

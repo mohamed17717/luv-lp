@@ -40,6 +40,9 @@ INSTALLED_APPS = [
 
     # apps
     'app',
+
+    # third parties
+    'django_user_agents',
 ]
 
 MIDDLEWARE = [
@@ -51,6 +54,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'django_user_agents.middleware.UserAgentMiddleware',
+    'app.middleware.WebRequestMiddleware'
 ]
 
 ROOT_URLCONF = 'dj.urls'
@@ -128,3 +134,7 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 VENV_PATH = os.path.dirname(BASE_DIR)
 STATIC_ROOT = os.path.join(VENV_PATH, 'static_root')
 MEDIA_ROOT = os.path.join(VENV_PATH, 'media_root')
+
+# Name of cache backend to cache user agents. If it not specified default
+# cache alias will be used. Set to `None` to disable caching.
+USER_AGENTS_CACHE = 'default'
